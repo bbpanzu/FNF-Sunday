@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="sunday_bop.png">
+	<!-- Created with Adobe Animate version 20.0.3.25487 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="sunday title0000" x="0" y="0" width="504" height="632" frameX="-28" frameY="-29" frameWidth="593" frameHeight="661"/>
+	<SubTexture name="sunday title0001" x="504" y="0" width="503" height="661" frameX="-2" frameY="0" frameWidth="593" frameHeight="661"/>
+	<SubTexture name="sunday title0002" x="1007" y="0" width="495" height="653" frameX="0" frameY="-8" frameWidth="593" frameHeight="661"/>
+	<SubTexture name="sunday title0003" x="1007" y="0" width="495" height="653" frameX="0" frameY="-8" frameWidth="593" frameHeight="661"/>
+	<SubTexture name="sunday title0004" x="1502" y="0" width="482" height="652" frameX="-7" frameY="-9" frameWidth="593" frameHeight="661"/>
+	<SubTexture name="sunday title0005" x="1502" y="0" width="482" height="652" frameX="-7" frameY="-9" frameWidth="593" frameHeight="661"/>
+	<SubTexture name="sunday title0006" x="0" y="661" width="429" height="639" frameX="-101" frameY="-22" frameWidth="593" frameHeight="661"/>
+	<SubTexture name="sunday title0007" x="429" y="661" width="467" height="608" frameX="-99" frameY="-53" frameWidth="593" frameHeight="661"/>
+	<SubTexture name="sunday title0008" x="896" y="661" width="459" height="595" frameX="-127" frameY="-66" frameWidth="593" frameHeight="661"/>
+	<SubTexture name="sunday title0009" x="896" y="661" width="459" height="595" frameX="-127" frameY="-66" frameWidth="593" frameHeight="661"/>
+	<SubTexture name="sunday title0010" x="1355" y="661" width="442" height="603" frameX="-151" frameY="-58" frameWidth="593" frameHeight="661"/>
+	<SubTexture name="sunday title0011" x="1355" y="661" width="442" height="603" frameX="-151" frameY="-58" frameWidth="593" frameHeight="661"/>
+</TextureAtlas>

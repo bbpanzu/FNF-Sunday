@@ -1,0 +1,6 @@
+1.5.3;
+- Score Screen
+- Rewrote the entire hit ranking system
+- Fixed song names so they don't crash
+- New asset loading system
+- New Logo
