@@ -9,6 +9,7 @@ import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import lime.utils.Assets;
+import openfl.utils.AssetManifest;
 
 
 #if windows
@@ -34,11 +35,15 @@ class FreeplayState extends MusicBeatState
 	private var curPlaying:Bool = false;
 
 	private var iconArray:Array<HealthIcon> = [];
+	private var ass:AssetManifest
 
 	override function create()
 	{
 		var initSonglist = CoolUtil.coolTextFile(Paths.txt('freeplaySonglist'));
 
+		ass = new AssetManifest()
+		
+		ass.addBitmapData("assets/shared/images/whore.png", "WHORESHIT");
 		for (i in 0...initSonglist.length)
 		{
 			var data:Array<String> = initSonglist[i].split(':');
@@ -138,6 +143,10 @@ class FreeplayState extends MusicBeatState
 			trace(md);
 		 */
 
+		 var flxShit:FlxSprite = new FlxSprite().loadGraphic("WHORESHIT");
+		 add(flxShit);
+		 flxShit.scrollFactor.set();
+		 
 		super.create();
 	}
 
