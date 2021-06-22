@@ -45,6 +45,8 @@ class Note extends FlxSprite
 		if (prevNote == null)
 			prevNote = this;
 
+			
+			this.style = style;
 		this.prevNote = prevNote;
 		isSustainNote = sustainNote;
 
@@ -149,7 +151,7 @@ class Note extends FlxSprite
 		
 			if (style == "guitar"){
 				offset.x = -15;
-				offset.y = -24;
+				offset.y = 24;
 			}
 		// trace(prevNote);
 
@@ -181,9 +183,18 @@ class Note extends FlxSprite
 			updateHitbox();
 
 			x -= width / 2;
-
+			if (style == "guitar"){
+			x -= width ;
+			}
 			if (PlayState.curStage.startsWith('school'))
 				x += 30;
+				
+				
+				//OFFSET ENDNOTES
+				
+			if (style == "guitar"){
+				x -= 30;
+			}
 				
 
 			if (prevNote.isSustainNote)
@@ -200,12 +211,18 @@ class Note extends FlxSprite
 						prevNote.animation.play('redhold');
 				}
 
+				//OFFSET hold notes
+					
 				
 				if(FlxG.save.data.scrollSpeed != 1)
 					prevNote.scale.y *= Conductor.stepCrochet / 100 * 1.5 * FlxG.save.data.scrollSpeed;
 				else
 					prevNote.scale.y *= Conductor.stepCrochet / 100 * 1.5 * PlayState.SONG.speed;
 				prevNote.updateHitbox();
+				if (style == "guitar"){
+					offset.x = -35;
+					//offset.y = -30;
+				}
 				// prevNote.setGraphicSize();
 			}
 		}

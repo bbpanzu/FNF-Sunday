@@ -110,6 +110,7 @@ class PlayState extends MusicBeatState
 	#end
 
 	private var vocals:FlxSound;
+	private var chromOn:Bool = false;
 
 	public static var dad:Character;
 	public static var gf:Character;
@@ -227,6 +228,7 @@ class PlayState extends MusicBeatState
 	private var saveNotes:Array<Float> = [];
 
 	private var executeModchart = false;
+	var ch = 2 / 1000;
 
 	// API stuff
 	
@@ -317,8 +319,10 @@ class PlayState extends MusicBeatState
 		FlxCamera.defaultCameras = [camGame];
 		
 		//BBPANZU if you want a disable shaders option then you could just disable these 2 lines using an if statement
-		camGame.setFilters(filters);
-		camGame.filtersEnabled = true;
+		if(!anti_seizure){
+			camGame.setFilters(filters);
+			camGame.filtersEnabled = true;
+		}
 
 		persistentUpdate = true;
 		persistentDraw = true;
@@ -1562,6 +1566,8 @@ class PlayState extends MusicBeatState
 					if (sustainNote.mustPress)
 					{
 						sustainNote.x += FlxG.width / 2; // general offset
+						
+						
 					}
 				}
 
@@ -1957,7 +1963,18 @@ class PlayState extends MusicBeatState
 		}
 
 		super.update(elapsed);
-
+		
+		
+		if (chromOn){
+		
+			ch = FlxG.random.int(1,5) / 1000;
+			ShadersHandler.setChrome(ch);
+		}else{
+			ShadersHandler.setChrome(0);
+			
+		}
+		
+		
 		scoreTxt.text = Ratings.CalculateRanking(songScore,songScoreDef,nps,maxNPS,accuracy);
 		if (FlxG.keys.justPressed.ENTER && startedCountdown && canPause)
 		{
@@ -2450,9 +2467,9 @@ class PlayState extends MusicBeatState
 						{
 							if (SONG.notes[Math.floor(curStep / 16)].altAnim){
 								dad.altAnim = '-alt';
-								if (SONG.song.toLowerCase() == 'marx') changeToGuitar();
+								if (SONG.song.toLowerCase() == 'marx' && !guitarModNOW) changeToGuitar();
 							}else{
-								if (SONG.song.toLowerCase() == 'marx') changeToSing();
+								if (SONG.song.toLowerCase() == 'marx' && guitarModNOW) changeToSing();
 							}
 						}
 	
@@ -2523,8 +2540,10 @@ class PlayState extends MusicBeatState
 					
 					
 
-					if (daNote.isSustainNote)
+					if (daNote.isSustainNote){
 						daNote.x += daNote.width / 2 + 17;
+						if (daNote.style == "guitar") daNote.x -= 20;
+					}
 					
 
 					//trace(daNote.y);
@@ -3528,7 +3547,6 @@ class PlayState extends MusicBeatState
 
 	var lightningStrikeBeat:Int = 0;
 	var lightningOffset:Int = 8;
-
 	override function beatHit()
 	{
 		super.beatHit();
@@ -3622,7 +3640,10 @@ class PlayState extends MusicBeatState
 					defaultCamZoom = 1.3;
 					garage.animation.play("crazy");
 					speakers.animation.play("boom");
-					if (anti_seizure) garage.animation.play("notcrazy");
+					if (anti_seizure){
+					chromOn = false;
+						garage.animation.play("notcrazy");
+					}
 					aaa.animation.play("idle");
 			}
 			if (curBeat == 32){
@@ -3635,9 +3656,12 @@ class PlayState extends MusicBeatState
 				dad.altAnim = "";
 			}
 			if (curBeat > 15 && curBeat < 114){
+				if (!anti_seizure)
+					chromOn = true;
 				FlxG.camera.shake(0.01, 0.5);
 			}
 			if (curBeat == 114) {
+					chromOn = false;
 					garage.animation.play("idle");
 					speakers.animation.play("idle");
 			}
@@ -3663,9 +3687,11 @@ class PlayState extends MusicBeatState
 				if (anti_seizure){
 					garage.animation.play('notcrazy');
 				}else{
+					chromOn = true;
 					garage.animation.play('crazy');
 				}
 			}else{
+					chromOn = false;
 					garage.animation.play('idle');
 			}
 			if (curBeat == 4){
@@ -3683,8 +3709,10 @@ class PlayState extends MusicBeatState
 				glowShit.visible = true;
 				
 				if (anti_seizure){
+					chromOn = false;
 					garage.animation.play('notcrazy');
 				}else{
+					chromOn = true;
 					garage.animation.play('crazy');
 				}
 				
@@ -3695,6 +3723,7 @@ class PlayState extends MusicBeatState
 			//	evilTrail.changeValuesEnabled(false, false, false, false);
 			//	trailshit.add(evilTrail);
 			}else{
+					chromOn = false;
 					defaultCamZoom = 1;
 				garage.setPosition( -316, -209);
 				glowShit.visible = false;
@@ -3783,7 +3812,6 @@ class PlayState extends MusicBeatState
 		
 		generateStaticArrows(0, "guitar",false);
 		generateStaticArrows(1, "guitar",false);
-		trace("GUITAR MODE");
 		fret.alpha = 1;
 	}
 	
@@ -3797,7 +3825,10 @@ class PlayState extends MusicBeatState
 		generateStaticArrows(0,SONG.noteStyle,false);
 		generateStaticArrows(1,SONG.noteStyle,false);
 	FlxTween.tween(fret, {alpha:0}, 0.3);
-		trace("normla mode :/");
+	}
+	
+	function dothechromaYe(){
+		
 	}
 
 	var curLight:Int = 0;
