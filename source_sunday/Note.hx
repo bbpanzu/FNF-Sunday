@@ -26,6 +26,7 @@ class Note extends FlxSprite
 	public var modifiedByLua:Bool = false;
 	public var sustainLength:Float = 0;
 	public var isSustainNote:Bool = false;
+	public var style:String = "";
 
 	public var noteScore:Float = 1;
 
@@ -37,7 +38,7 @@ class Note extends FlxSprite
 
 	public var rating:String = "shit";
 
-	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false)
+	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false,style:String="normal")
 	{
 		super();
 
@@ -59,7 +60,7 @@ class Note extends FlxSprite
 
 		var daStage:String = PlayState.curStage;
 
-		switch (PlayState.SONG.noteStyle)
+		switch (style)
 		{
 			case 'pixel':
 				loadGraphic(Paths.image('weeb/pixelUI/arrows-pixels','week6'), true, 17, 17);
@@ -86,6 +87,26 @@ class Note extends FlxSprite
 
 				setGraphicSize(Std.int(width * PlayState.daPixelZoom));
 				updateHitbox();
+			case 'guitar':
+				frames = Paths.getSparrowAtlas('sunday/GH_NOTES');
+
+				animation.addByPrefix('greenScroll', 'upNote0');
+				animation.addByPrefix('redScroll', 'rightNote0');
+				animation.addByPrefix('blueScroll', 'downNote0');
+				animation.addByPrefix('purpleScroll', 'leftNote0');
+
+				animation.addByPrefix('purpleholdend', 'leftHoldEnd');
+				animation.addByPrefix('greenholdend', 'upHoldEnd');
+				animation.addByPrefix('redholdend', 'rightHoldEnd');
+				animation.addByPrefix('blueholdend', 'downHoldEnd');
+
+				animation.addByPrefix('purplehold', 'leftHold');
+				animation.addByPrefix('greenhold', 'upHold');
+				animation.addByPrefix('redhold', 'rightHold');
+				animation.addByPrefix('bluehold', 'downHold');
+				alpha = 0;
+
+				antialiasing = true;
 			default:
 				frames = Paths.getSparrowAtlas('NOTE_assets');
 
@@ -187,7 +208,7 @@ class Note extends FlxSprite
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-
+		alpha += 0.01;
 		if (mustPress)
 		{
 			// The * 0.5 is so that it's easier to hit them too late, instead of too early

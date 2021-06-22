@@ -258,6 +258,7 @@ class FlashingLightsOption extends Option
 	public override function press():Bool
 	{
 		FlxG.save.data.flashing = !FlxG.save.data.flashing;
+		PlayState.anti_seizure = !FlxG.save.data.flashing;
 		display = updateDisplay();
 		return true;
 	}

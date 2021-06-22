@@ -35,13 +35,13 @@ class FreeplayState extends MusicBeatState
 	private var curPlaying:Bool = false;
 
 	private var iconArray:Array<HealthIcon> = [];
-	private var ass:AssetManifest
+	private var ass:AssetManifest;
 
 	override function create()
 	{
 		var initSonglist = CoolUtil.coolTextFile(Paths.txt('freeplaySonglist'));
 
-		ass = new AssetManifest()
+		ass = new AssetManifest();
 		
 		ass.addBitmapData("assets/shared/images/whore.png", "WHORESHIT");
 		for (i in 0...initSonglist.length)

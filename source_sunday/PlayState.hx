@@ -6,6 +6,7 @@ import flixel.input.keyboard.FlxKey;
 import haxe.Exception;
 import openfl.geom.Matrix;
 import openfl.display.BitmapData;
+import openfl.net.URLRequest;
 import openfl.utils.AssetType;
 import lime.graphics.Image;
 import flixel.graphics.FlxGraphic;
@@ -108,11 +109,13 @@ class PlayState extends MusicBeatState
 	public static var dad:Character;
 	public static var gf:Character;
 	public static var boyfriend:Boyfriend;
+	public var winY:UInt;
 
 	public var notes:FlxTypedGroup<Note>;
 	private var unspawnNotes:Array<Note> = [];
 
 	public var strumLine:FlxSprite;
+	public var fret:FlxSprite;
 	private var curSection:Int = 0;
 
 	private var camFollow:FlxObject;
@@ -268,7 +271,7 @@ class PlayState extends MusicBeatState
 		}
 
 		iconRPC = SONG.player2;
-
+		
 		// To avoid having duplicate images in Discord assets
 		switch (iconRPC)
 		{
@@ -736,6 +739,11 @@ class PlayState extends MusicBeatState
 				glowShit.loadGraphic(Paths.image('sunday/shiny'));
 				glowShit.blend = "add";
 				glowShit.visible = false;
+				
+				fret = new FlxSprite().loadGraphic(Paths.image("sunday/fret"));
+				fret.alpha = 0;
+				fret.scrollFactor.set();
+				add(fret);
 			}
 			// bg.setGraphicSize(Std.int(bg.width * 2.5));
 			// bg.updateHitbox();
@@ -754,7 +762,6 @@ class PlayState extends MusicBeatState
 			
 			
 			//add(trailshit);
-			add(glowShit);
 				}
 			case 'stage':
 				{
@@ -933,6 +940,9 @@ class PlayState extends MusicBeatState
 
 		add(dad);
 		add(boyfriend);
+		
+		if (curStage == 'garage')
+			add(glowShit);
 		if (loadRep)
 		{
 			FlxG.watch.addQuick('rep rpesses',repPresses);
@@ -944,6 +954,7 @@ class PlayState extends MusicBeatState
 			// FlxG.watch.addQuick('Queued',inputsQueued);
 		}
 
+		
 		var doof:DialogueBox = new DialogueBox(false, dialogue);
 		// doof.x += 70;
 		// doof.y = FlxG.height * 0.5;
@@ -1255,8 +1266,8 @@ class PlayState extends MusicBeatState
 	{
 		inCutscene = false;
 
-		generateStaticArrows(0);
-		generateStaticArrows(1);
+		generateStaticArrows(0,SONG.noteStyle);
+		generateStaticArrows(1,SONG.noteStyle);
 
 
 		#if windows
@@ -1493,6 +1504,11 @@ class PlayState extends MusicBeatState
 		var daBeats:Int = 0; // Not exactly representative of 'daBeats' lol, just how much it has looped
 		for (section in noteData)
 		{
+			
+			var alt:String = "";
+			
+			if (section.altAnim && SONG.song.toLowerCase() == "marx")alt = "guitar";
+			
 			var coolSection:Int = Std.int(section.lengthInSteps / 4);
 
 			for (songNotes in section.sectionNotes)
@@ -1515,7 +1531,7 @@ class PlayState extends MusicBeatState
 				else
 					oldNote = null;
 
-				var swagNote:Note = new Note(daStrumTime, daNoteData, oldNote);
+				var swagNote:Note = new Note(daStrumTime, daNoteData, oldNote,false,alt);
 				swagNote.sustainLength = songNotes[2];
 				swagNote.scrollFactor.set(0, 0);
 
@@ -1528,10 +1544,10 @@ class PlayState extends MusicBeatState
 				{
 					oldNote = unspawnNotes[Std.int(unspawnNotes.length - 1)];
 
-					var sustainNote:Note = new Note(daStrumTime + (Conductor.stepCrochet * susNote) + Conductor.stepCrochet, daNoteData, oldNote, true);
+					var sustainNote:Note = new Note(daStrumTime + (Conductor.stepCrochet * susNote) + Conductor.stepCrochet, daNoteData, oldNote, true,alt);
 					sustainNote.scrollFactor.set();
 					unspawnNotes.push(sustainNote);
-
+					if(alt == "guitar")sustainNote.blend = "add";
 					sustainNote.mustPress = gottaHitNote;
 
 					if (sustainNote.mustPress)
@@ -1566,14 +1582,14 @@ class PlayState extends MusicBeatState
 		return FlxSort.byValues(FlxSort.ASCENDING, Obj1.strumTime, Obj2.strumTime);
 	}
 
-	private function generateStaticArrows(player:Int):Void
+	private function generateStaticArrows(player:Int,style:String,tweenShit:Bool = true):Void
 	{
 		for (i in 0...4)
 		{
 			// FlxG.log.add(i);
 			var babyArrow:FlxSprite = new FlxSprite(0, strumLine.y);
 
-			switch (SONG.noteStyle)
+			switch (style)
 			{
 				case 'pixel':
 					babyArrow.loadGraphic(Paths.image('weeb/pixelUI/arrows-pixels'), true, 17, 17);
@@ -1609,6 +1625,38 @@ class PlayState extends MusicBeatState
 							babyArrow.animation.add('pressed', [7, 11], 12, false);
 							babyArrow.animation.add('confirm', [15, 19], 24, false);
 					}
+				case 'guitar':
+					babyArrow.frames = Paths.getSparrowAtlas('sunday/GH_NOTES');
+					babyArrow.animation.addByPrefix('green', 'upNoteBaby');
+					babyArrow.animation.addByPrefix('blue', 'downNoteBaby');
+					babyArrow.animation.addByPrefix('purple', 'leftNoteBaby');
+					babyArrow.animation.addByPrefix('red', 'rightNoteBaby');
+	
+					babyArrow.antialiasing = true;
+	
+					switch (Math.abs(i))
+					{
+						case 0:
+							babyArrow.x += Note.swagWidth * 0;
+							babyArrow.animation.addByPrefix('static', 'leftNoteBaby');
+							babyArrow.animation.addByPrefix('pressed', 'left press', 24, false);
+							babyArrow.animation.addByPrefix('confirm', 'left confirm', 24, false);
+						case 1:
+							babyArrow.x += Note.swagWidth * 1;
+							babyArrow.animation.addByPrefix('static', 'downNoteBaby');
+							babyArrow.animation.addByPrefix('pressed', 'down press', 24, false);
+							babyArrow.animation.addByPrefix('confirm', 'down confirm', 24, false);
+						case 2:
+							babyArrow.x += Note.swagWidth * 2;
+							babyArrow.animation.addByPrefix('static', 'upNoteBaby');
+							babyArrow.animation.addByPrefix('pressed', 'up press', 24, false);
+							babyArrow.animation.addByPrefix('confirm', 'up confirm', 24, false);
+						case 3:
+							babyArrow.x += Note.swagWidth * 3;
+							babyArrow.animation.addByPrefix('static', 'rightNoteBaby');
+							babyArrow.animation.addByPrefix('pressed', 'right press', 24, false);
+							babyArrow.animation.addByPrefix('confirm', 'right confirm', 24, false);
+						}
 				
 				case 'normal':
 					babyArrow.frames = Paths.getSparrowAtlas('NOTE_assets');
@@ -1682,7 +1730,7 @@ class PlayState extends MusicBeatState
 			babyArrow.updateHitbox();
 			babyArrow.scrollFactor.set();
 
-			if (!isStoryMode)
+			if (!isStoryMode && tweenShit)
 			{
 				babyArrow.y -= 10;
 				babyArrow.alpha = 0;
@@ -1698,16 +1746,18 @@ class PlayState extends MusicBeatState
 				case 1:
 					playerStrums.add(babyArrow);
 			}
-
-			babyArrow.animation.play('static');
+			
+			if(style != "guitar"){
 			babyArrow.x += 50;
 			babyArrow.x += ((FlxG.width / 2) * player);
-			
+			}
+			babyArrow.animation.play('static');
 			cpuStrums.forEach(function(spr:FlxSprite)
 			{					
 				spr.centerOffsets(); //CPU arrows start out slightly off-center
 			});
 
+			
 			strumLineNotes.add(babyArrow);
 		}
 	}
@@ -1787,6 +1837,7 @@ class PlayState extends MusicBeatState
 	var maxNPS:Int = 0;
 
 	public static var songRate = 1.5;
+	public var guitarModNOW:Bool = false;
 
 	override public function update(elapsed:Float)
 	{
@@ -2388,8 +2439,12 @@ class PlayState extends MusicBeatState
 	
 						if (SONG.notes[Math.floor(curStep / 16)] != null)
 						{
-							if (SONG.notes[Math.floor(curStep / 16)].altAnim)
+							if (SONG.notes[Math.floor(curStep / 16)].altAnim){
 								dad.altAnim = '-alt';
+								if (SONG.song.toLowerCase() == 'marx') changeToGuitar();
+							}else{
+								if (SONG.song.toLowerCase() == 'marx') changeToSing();
+							}
 						}
 	
 						switch (Math.abs(daNote.noteData))
@@ -2412,7 +2467,7 @@ class PlayState extends MusicBeatState
 								{
 									spr.animation.play('confirm', true);
 								}
-								if (spr.animation.curAnim.name == 'confirm' && !curStage.startsWith('school'))
+								if (spr.animation.curAnim.name == 'confirm' && !curStage.startsWith('school') && !guitarModNOW)
 								{
 									spr.centerOffsets();
 									spr.offset.x -= 13;
@@ -3608,8 +3663,9 @@ class PlayState extends MusicBeatState
 				speakers.animation.play("boom");
 				
 				glowShit.visible = true;
+				
 				if (anti_seizure){
-					garage.animation.play('crazy');
+					garage.animation.play('notcrazy');
 				}else{
 					garage.animation.play('crazy');
 				}
@@ -3697,6 +3753,33 @@ class PlayState extends MusicBeatState
 				lightningStrikeShit();
 			}
 		}
+	}
+	
+	
+	function changeToGuitar(){
+		guitarModNOW = true;
+		remove(strumLineNotes);
+		strumLineNotes = new FlxTypedGroup<FlxSprite>();
+		add(strumLineNotes);
+		strumLineNotes.cameras = [camHUD];
+		
+		generateStaticArrows(0, "guitar",false);
+		generateStaticArrows(1, "guitar",false);
+		trace("GUITAR MODE");
+		fret.alpha = 1;
+	}
+	
+	function changeToSing(){
+		guitarModNOW = false;
+		remove(strumLineNotes);
+		strumLineNotes = new FlxTypedGroup<FlxSprite>();
+		add(strumLineNotes);
+		strumLineNotes.cameras = [camHUD];
+		
+		generateStaticArrows(0,SONG.noteStyle,false);
+		generateStaticArrows(1,SONG.noteStyle,false);
+	FlxTween.tween(fret, {alpha:0}, 0.3);
+		trace("normla mode :/");
 	}
 
 	var curLight:Int = 0;
