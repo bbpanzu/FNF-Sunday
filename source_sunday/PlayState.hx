@@ -1747,10 +1747,10 @@ class PlayState extends MusicBeatState
 					playerStrums.add(babyArrow);
 			}
 			
-			if(style != "guitar"){
+			//if(style != "guitar"){
 			babyArrow.x += 50;
+			//}
 			babyArrow.x += ((FlxG.width / 2) * player);
-			}
 			babyArrow.animation.play('static');
 			cpuStrums.forEach(function(spr:FlxSprite)
 			{					
@@ -3155,10 +3155,12 @@ class PlayState extends MusicBeatState
 						spr.animation.play('static');
 		 
 					if (spr.animation.curAnim.name == 'confirm' && !curStage.startsWith('school'))
-					{
-						spr.centerOffsets();
-						spr.offset.x -= 13;
-						spr.offset.y -= 13;
+						{
+									spr.centerOffsets();
+									if(!guitarModNOW){
+										spr.offset.x -= 13;
+										spr.offset.y -= 13;
+									}
 					}
 					else
 						spr.centerOffsets();

@@ -100,11 +100,10 @@ class Note extends FlxSprite
 				animation.addByPrefix('redholdend', 'rightHoldEnd');
 				animation.addByPrefix('blueholdend', 'downHoldEnd');
 
-				animation.addByPrefix('purplehold', 'leftHold');
-				animation.addByPrefix('greenhold', 'upHold');
-				animation.addByPrefix('redhold', 'rightHold');
-				animation.addByPrefix('bluehold', 'downHold');
-				alpha = 0;
+				animation.addByPrefix('purplehold', 'leftHold0');
+				animation.addByPrefix('greenhold', 'upHold0');
+				animation.addByPrefix('redhold', 'rightHold0');
+				animation.addByPrefix('bluehold', 'downHold0');
 
 				antialiasing = true;
 			default:
@@ -146,6 +145,12 @@ class Note extends FlxSprite
 				animation.play('redScroll');
 		}
 
+		
+		
+			if (style == "guitar"){
+				offset.x = -15;
+				offset.y = -24;
+			}
 		// trace(prevNote);
 
 		// we make sure its downscroll and its a SUSTAIN NOTE (aka a trail, not a note)
@@ -179,6 +184,7 @@ class Note extends FlxSprite
 
 			if (PlayState.curStage.startsWith('school'))
 				x += 30;
+				
 
 			if (prevNote.isSustainNote)
 			{
