@@ -56,6 +56,8 @@ import lime.utils.Assets;
 import openfl.display.BlendMode;
 import openfl.display.StageQuality;
 import openfl.filters.ShaderFilter;
+//EYO SUP BBPANZU lol
+import openfl.filters.BitmapFilter;
 
 #if windows
 import Discord.DiscordClient;
@@ -69,6 +71,9 @@ using StringTools;
 
 class PlayState extends MusicBeatState
 {
+	//Filter array for bitmap bullshit ya for shaders
+	var filters:Array<BitmapFilter> = [];
+	var shadersLoaded:Bool = false;
 	public static var instance:PlayState = null;
 
 	public static var curStage:String = '';
@@ -310,6 +315,10 @@ class PlayState extends MusicBeatState
 		FlxG.cameras.add(camHUD);
 
 		FlxCamera.defaultCameras = [camGame];
+		
+		//BBPANZU if you want a disable shaders option then you could just disable these 2 lines using an if statement
+		camGame.setFilters(filters);
+		camGame.filtersEnabled = true;
 
 		persistentUpdate = true;
 		persistentDraw = true;
@@ -3523,6 +3532,13 @@ class PlayState extends MusicBeatState
 	override function beatHit()
 	{
 		super.beatHit();
+		
+		if (curBeat > 0 && !shadersLoaded)
+		{
+			shadersLoaded = true;
+			// also comment filters.push if your planning to do a disable shaders option
+			filters.push(ShadersHandler.chromaticAberration);
+		}
 
 		if (generatedMusic)
 		{
