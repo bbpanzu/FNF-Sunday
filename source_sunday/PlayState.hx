@@ -319,7 +319,7 @@ class PlayState extends MusicBeatState
 		FlxCamera.defaultCameras = [camGame];
 		
 		//BBPANZU if you want a disable shaders option then you could just disable these 2 lines using an if statement
-		if(!anti_seizure){
+		if(!FlxG.save.data.distractions){
 			camGame.setFilters(filters);
 			camGame.filtersEnabled = true;
 		}
@@ -756,7 +756,6 @@ class PlayState extends MusicBeatState
 				fret = new FlxSprite().loadGraphic(Paths.image("sunday/fret"));
 				fret.alpha = 0;
 				fret.scrollFactor.set();
-				add(fret);
 			}
 			// bg.setGraphicSize(Std.int(bg.width * 2.5));
 			// bg.updateHitbox();
@@ -954,8 +953,11 @@ class PlayState extends MusicBeatState
 		add(dad);
 		add(boyfriend);
 		
-		if (curStage == 'garage')
+		if (curStage == 'garage'){
 			add(glowShit);
+				add(fret);
+				fret.cameras = [camHUD];
+		}
 		if (loadRep)
 		{
 			FlxG.watch.addQuick('rep rpesses',repPresses);
@@ -1101,6 +1103,7 @@ class PlayState extends MusicBeatState
 		iconP1.cameras = [camHUD];
 		iconP2.cameras = [camHUD];
 		scoreTxt.cameras = [camHUD];
+		botPlayState.cameras = [camHUD];
 		doof.cameras = [camHUD];
 		if (FlxG.save.data.songPosition)
 		{
@@ -3641,7 +3644,6 @@ class PlayState extends MusicBeatState
 					garage.animation.play("crazy");
 					speakers.animation.play("boom");
 					if (anti_seizure){
-					chromOn = false;
 						garage.animation.play("notcrazy");
 					}
 					aaa.animation.play("idle");
@@ -3656,7 +3658,6 @@ class PlayState extends MusicBeatState
 				dad.altAnim = "";
 			}
 			if (curBeat > 15 && curBeat < 114){
-				if (!anti_seizure)
 					chromOn = true;
 				FlxG.camera.shake(0.01, 0.5);
 			}
@@ -3687,9 +3688,9 @@ class PlayState extends MusicBeatState
 				if (anti_seizure){
 					garage.animation.play('notcrazy');
 				}else{
-					chromOn = true;
 					garage.animation.play('crazy');
 				}
+					chromOn = true;
 			}else{
 					chromOn = false;
 					garage.animation.play('idle');
@@ -3708,13 +3709,12 @@ class PlayState extends MusicBeatState
 				
 				glowShit.visible = true;
 				
-				if (anti_seizure){
-					chromOn = false;
+				if (anti_seizure){ 
 					garage.animation.play('notcrazy');
 				}else{
-					chromOn = true;
 					garage.animation.play('crazy');
 				}
+					chromOn = true;
 				
 				garage.setPosition( -449.35, -157.85);
 			

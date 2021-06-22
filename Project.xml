@@ -35,8 +35,8 @@
 	<!-- _____________________________ Path Settings ____________________________ -->
 
 	<set name="BUILD_DIR" value="export_sunday/debug" if="debug" />
-	<set name="BUILD_DIR" value="export_sunday/debug" unless="debug" />
-	<set name="BUILD_DIR" value="export/32bit" if="32bit" />
+	<set name="BUILD_DIR" value="export_sunday/release" unless="debug" />
+	<set name="BUILD_DIR" value="export_sunday/32bit" if="32bit" />
 
 	<classpath name="source_sunday" />
 

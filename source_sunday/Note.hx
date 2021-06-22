@@ -151,7 +151,7 @@ class Note extends FlxSprite
 		
 			if (style == "guitar"){
 				offset.x = -15;
-				offset.y = 24;
+				offset.y = -30;
 			}
 		// trace(prevNote);
 
@@ -193,9 +193,13 @@ class Note extends FlxSprite
 				//OFFSET ENDNOTES
 				
 			if (style == "guitar"){
-				x -= 30;
+				//x -= 30;
 			}
 				
+				if (style == "guitar"){
+					offset.x = -15;
+					//offset.y = -30;
+				}
 
 			if (prevNote.isSustainNote)
 			{
@@ -220,7 +224,7 @@ class Note extends FlxSprite
 					prevNote.scale.y *= Conductor.stepCrochet / 100 * 1.5 * PlayState.SONG.speed;
 				prevNote.updateHitbox();
 				if (style == "guitar"){
-					offset.x = -35;
+					//offset.x = -35;
 					//offset.y = -30;
 				}
 				// prevNote.setGraphicSize();
