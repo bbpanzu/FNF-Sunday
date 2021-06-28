@@ -36,7 +36,9 @@ class MenuCharacter extends FlxSprite
 
 	public function new(x:Int, y:Int, scale:Float, flipped:Bool)
 	{
+		
 		super(x, y);
+		
 		this.flipped = flipped;
 
 		antialiasing = true;
@@ -55,6 +57,7 @@ class MenuCharacter extends FlxSprite
 
 		setGraphicSize(Std.int(width * scale));
 		updateHitbox();
+		blend = "invert";
 	}
 
 	public function setCharacter(character:String):Void

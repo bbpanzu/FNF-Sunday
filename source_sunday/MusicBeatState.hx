@@ -37,13 +37,30 @@ class MusicBeatState extends FlxUIState
 
 
 	var array:Array<FlxColor> = [
-		FlxColor.fromRGB(148, 0, 211),
-		FlxColor.fromRGB(75, 0, 130),
-		FlxColor.fromRGB(0, 0, 255),
-		FlxColor.fromRGB(0, 255, 0),
+	//non-binary
+		FlxColor.fromRGB(0, 0, 0),
+		FlxColor.fromRGB(0, 0, 0),
+		FlxColor.fromRGB(0, 0, 0),
+		FlxColor.fromRGB(75, 0, 128),
+		FlxColor.fromRGB(75, 0, 128),
+		FlxColor.fromRGB(75, 0, 128),
+		FlxColor.fromRGB(255, 255, 255),
+		FlxColor.fromRGB(255, 255, 255),
+		FlxColor.fromRGB(255, 255, 255),
 		FlxColor.fromRGB(255, 255, 0),
-		FlxColor.fromRGB(255, 127, 0),
-		FlxColor.fromRGB(255, 0 , 0)
+		FlxColor.fromRGB(255, 255, 0),
+		FlxColor.fromRGB(255, 255, 0),
+		
+	//bisexual : 00
+		FlxColor.fromRGB(0, 0, 64),
+		FlxColor.fromRGB(0, 0, 64),
+		FlxColor.fromRGB(0, 0, 64),
+		FlxColor.fromRGB(75, 0, 128),
+		FlxColor.fromRGB(75, 0, 128),
+		FlxColor.fromRGB(75, 0, 128),
+		FlxColor.fromRGB(255, 0 , 128),
+		FlxColor.fromRGB(255, 0 , 128),
+		FlxColor.fromRGB(255, 0 , 128)
 	];
 
 	var skippedFrames = 0;

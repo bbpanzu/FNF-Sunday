@@ -89,7 +89,8 @@ class StoryMenuState extends MusicBeatState
 		rankText.screenCenter(X);
 
 		var ui_tex = Paths.getSparrowAtlas('campaign_menu_UI_assets');
-		var yellowBG:FlxSprite = new FlxSprite(0, 56).makeGraphic(FlxG.width, 400, 0xFFF9CF51);
+		var yellowBG:FlxSprite = new FlxSprite(0, 56).makeGraphic(FlxG.width, 404, 0xFFFCFCFC);
+		var inverted:FlxSprite = new FlxSprite(0, 56).makeGraphic(FlxG.width,400,0xFF232323);
 
 		grpWeekText = new FlxTypedGroup<MenuItem>();
 		add(grpWeekText);
@@ -167,6 +168,7 @@ class StoryMenuState extends MusicBeatState
 
 		add(yellowBG);
 		add(grpWeekCharacters);
+		add(inverted);
 
 		txtTracklist = new FlxText(FlxG.width * 0.05, yellowBG.x + yellowBG.height + 100, 0, "Tracks", 32);
 		txtTracklist.alignment = CENTER;

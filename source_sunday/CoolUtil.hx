@@ -13,6 +13,12 @@ class CoolUtil
 		return difficultyArray[PlayState.storyDifficulty];
 	}
 
+	public static function difficultyFromInt(shitFuck:Int):String
+	{
+		
+		return difficultyArray[shitFuck];
+	}
+
 	public static function coolTextFile(path:String):Array<String>
 	{
 		var daList:Array<String> = Assets.getText(path).trim().split('\n');

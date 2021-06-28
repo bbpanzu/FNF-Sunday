@@ -2,6 +2,7 @@ package;
 
 import flixel.FlxState;
 import flixel.FlxG;
+import flixel.system.FlxAssets.FlxGraphicAsset;
 
 import flixel.FlxSprite;
 import flixel.FlxSubState;
@@ -33,6 +34,7 @@ class VideoState extends MusicBeatState
 	public var defaultText:String = "";
 	public var doShit:Bool = false;
 	public var pauseText:String = "Press P To Pause/Unpause";
+	public var videoSprite:FlxSprite = new FlxSprite();
 
 	public function new(source:String, toTrans:FlxState=null,toFunction:Void->Void)
 	{
@@ -62,6 +64,9 @@ class VideoState extends MusicBeatState
 		#end
 		var bg:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
 		add(bg);
+		var skipText:FlxText = new FlxText(0, 0, 0, "Press ENTER to Skip", 16);
+		skipText.setBorderStyle(FlxTextBorderStyle.OUTLINE,0xFF000000,2,1);
+		skipText.y = 720 - skipText.height;
 		var html5Text:String = "You Are Not Using HTML5...\nThe Video Didnt Load!";
 		if (isHTML)
 		{
@@ -74,6 +79,8 @@ class VideoState extends MusicBeatState
 		txt.setFormat("VCR OSD Mono", 32, FlxColor.WHITE, CENTER);
 		txt.screenCenter();
 		add(txt);
+		add(videoSprite);
+		add(skipText);
 
 		if (GlobalVideo.isWebm)
 		{
@@ -117,6 +124,10 @@ class VideoState extends MusicBeatState
 				doShit = true;
 			//}, 1);
 		}
+		
+		
+		var data = Main.webmHandle.webm.bitmapData;
+		videoSprite.loadGraphic(data);
 	}
 	
 	override function update(elapsed:Float)
@@ -167,7 +178,6 @@ class VideoState extends MusicBeatState
 			FlxG.sound.music.volume = 0;
 		}
 		GlobalVideo.get().update(elapsed);
-
 		if (controls.RESET)
 		{
 			GlobalVideo.get().restart();
@@ -193,7 +203,6 @@ class VideoState extends MusicBeatState
 			GlobalVideo.get().hide();
 			GlobalVideo.get().stop();
 		}
-		
 		if (controls.ACCEPT || GlobalVideo.get().ended)
 		{
 			notDone = false;

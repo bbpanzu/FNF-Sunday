@@ -1,5 +1,6 @@
 package;
 
+import flixel.input.gamepad.FlxGamepad;
 import Controls.KeyboardScheme;
 import flixel.FlxG;
 import flixel.FlxObject;
@@ -7,6 +8,7 @@ import flixel.FlxSprite;
 import flixel.effects.FlxFlicker;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.system.FlxSound;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -14,6 +16,7 @@ import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 import io.newgrounds.NG;
 import lime.app.Application;
+import openfl.filters.BlurFilter;
 
 #if windows
 import Discord.DiscordClient;
@@ -39,15 +42,20 @@ class MainMenuState extends MusicBeatState
 
 	public static var nightly:String = "";
 
-	public static var kadeEngineVer:String = "1.4.2" + nightly;
+	public static var kadeEngineVer:String = "1.5.4" + nightly;
 	public static var gameVer:String = "0.2.7.1";
+	public var bl:Float = 0;
+	public static var instance:MainMenuState = null;
 
 	var magenta:FlxSprite;
 	var camFollow:FlxObject;
+	var blx:Float=0;
+	var bly:Float=0;
 	public static var finishedFunnyMove:Bool = false;
 
 	override function create()
 	{
+		instance = this;
 		#if windows
 		// Updating Discord Rich Presence
 		DiscordClient.changePresence("In the Menus", null);
@@ -57,16 +65,22 @@ class MainMenuState extends MusicBeatState
 		{
 			FlxG.sound.playMusic(Paths.music('freakyMenu'));
 		}
-
+		var bbb:FlxSprite = new FlxSprite().makeGraphic(1280, 720, 0xFF343434);
+bbb.scrollFactor.set();
+add(bbb);
+		FlxG.camera.setFilters([ShadersHandler.chromaticAberration, ShadersHandler.radialBlur]);
+		ShadersHandler.setChrome(0);
+		//ShadersHandler.setBlur(0,0);
 		persistentUpdate = persistentDraw = true;
 
-		var bg:FlxSprite = new FlxSprite(-100).loadGraphic(Paths.image('menuBG'));
+		var bg:FlxSprite = new FlxSprite(-100).loadGraphic(Paths.image('menuDesat'));
 		bg.scrollFactor.x = 0;
 		bg.scrollFactor.y = 0.10;
 		bg.setGraphicSize(Std.int(bg.width * 1.1));
 		bg.updateHitbox();
 		bg.screenCenter();
 		bg.antialiasing = true;
+		bg.color = 0xFF343434;
 		add(bg);
 
 		camFollow = new FlxObject(0, 0, 1, 1);
@@ -80,7 +94,7 @@ class MainMenuState extends MusicBeatState
 		magenta.screenCenter();
 		magenta.visible = false;
 		magenta.antialiasing = true;
-		magenta.color = 0xFFfd719b;
+		magenta.color = 0xFF660000;
 		add(magenta);
 		// magenta.scrollFactor.set();
 
@@ -99,17 +113,18 @@ class MainMenuState extends MusicBeatState
 			menuItem.ID = i;
 			menuItem.screenCenter(X);
 			menuItems.add(menuItem);
-			menuItem.scrollFactor.set();
+			menuItem.scrollFactor.set(0,1.1);
 			menuItem.antialiasing = true;
 			if (firstStart)
 				FlxTween.tween(menuItem,{y: 60 + (i * 160)},1 + (i * 0.25) ,{ease: FlxEase.expoInOut, onComplete: function(flxTween:FlxTween) 
 					{ 
 						finishedFunnyMove = true; 
+						changeItem();
 					}});
 			else
 				menuItem.y = 60 + (i * 160);
 		}
-
+		
 		firstStart = false;
 
 		FlxG.camera.follow(camFollow, null, 0.60 * (60 / FlxG.save.data.fpsCap));
@@ -143,18 +158,34 @@ class MainMenuState extends MusicBeatState
 
 		if (!selectedSomethin)
 		{
-			if (controls.UP_P)
+			var gamepad:FlxGamepad = FlxG.gamepads.lastActive;
+
+			if (gamepad != null)
+			{
+				if (gamepad.justPressed.DPAD_UP)
+				{
+					FlxG.sound.play(Paths.sound('scrollMenu'));
+					changeItem(-1);
+				}
+				if (gamepad.justPressed.DPAD_DOWN)
+				{
+					FlxG.sound.play(Paths.sound('scrollMenu'));
+					changeItem(1);
+				}
+			}
+
+			if (FlxG.keys.justPressed.UP)
 			{
 				FlxG.sound.play(Paths.sound('scrollMenu'));
 				changeItem(-1);
 			}
 
-			if (controls.DOWN_P)
+			if (FlxG.keys.justPressed.DOWN)
 			{
 				FlxG.sound.play(Paths.sound('scrollMenu'));
 				changeItem(1);
 			}
-
+			
 			if (controls.BACK)
 			{
 				FlxG.switchState(new TitleState());
@@ -164,17 +195,13 @@ class MainMenuState extends MusicBeatState
 			{
 				if (optionShit[curSelected] == 'donate')
 				{
-					#if linux
-					Sys.command('/usr/bin/xdg-open', ["https://www.kickstarter.com/projects/funkin/friday-night-funkin-the-full-ass-game", "&"]);
-					#else
-					FlxG.openURL('https://www.kickstarter.com/projects/funkin/friday-night-funkin-the-full-ass-game');
-					#end
+					fancyOpenURL("https://ninja-muffin24.itch.io/funkin");
 				}
 				else
 				{
 					selectedSomethin = true;
 					FlxG.sound.play(Paths.sound('confirmMenu'));
-					
+					FlxG.camera.shake(0.02, 0.3);
 					if (FlxG.save.data.flashing)
 						FlxFlicker.flicker(magenta, 1.1, 0.15, false);
 
@@ -213,7 +240,8 @@ class MainMenuState extends MusicBeatState
 		}
 
 		super.update(elapsed);
-
+		ShadersHandler.setChrome(FlxG.random.int(2,6)/1000);
+		ShadersHandler.setRadialBlur(640,360,FlxG.random.float(0.001,0.05));
 		menuItems.forEach(function(spr:FlxSprite)
 		{
 			spr.screenCenter(X);
@@ -222,6 +250,9 @@ class MainMenuState extends MusicBeatState
 	
 	function goToState()
 	{
+		//ShadersHandler.setBlur(0,bl);
+		FlxTween.tween(MainMenuState.instance, {bl: 0.1}, 1, {ease:FlxEase.circIn});
+		FlxTween.tween(camFollow,{y:-5000},1,{ease:FlxEase.circIn,onComplete:function(e:FlxTween){
 		var daChoice:String = optionShit[curSelected];
 
 		switch (daChoice)
@@ -237,6 +268,9 @@ class MainMenuState extends MusicBeatState
 			case 'options':
 				FlxG.switchState(new OptionsMenu());
 		}
+		
+		
+		}});
 	}
 
 	function changeItem(huh:Int = 0)
@@ -253,11 +287,14 @@ class MainMenuState extends MusicBeatState
 		menuItems.forEach(function(spr:FlxSprite)
 		{
 			spr.animation.play('idle');
-
+				
 			if (spr.ID == curSelected && finishedFunnyMove)
 			{
+				FlxTween.tween(spr.scale, {x:1.2, y:1.2}, 0.1, {type:FlxTweenType.BACKWARD });
 				spr.animation.play('selected');
 				camFollow.setPosition(spr.getGraphicMidpoint().x, spr.getGraphicMidpoint().y);
+			}else{
+				FlxTween.tween(spr.scale, {x:1, y:1}, 0.1);
 			}
 
 			spr.updateHitbox();
