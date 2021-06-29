@@ -2887,7 +2887,7 @@ class PlayState extends MusicBeatState
 
 		if (offsetTesting)
 		{
-			FlxG.sound.playMusic(Paths.music('freakyMenu'));
+			FlxG.sound.playMusic(Paths.music('shred'));
 			offsetTesting = false;
 			LoadingState.loadAndSwitchState(new OptionsMenu());
 			FlxG.save.data.offset = offsetTest;
@@ -2902,7 +2902,7 @@ class PlayState extends MusicBeatState
 
 				if (storyPlaylist.length <= 0)
 				{
-					FlxG.sound.playMusic(Paths.music('freakyMenu'));
+					FlxG.sound.playMusic(Paths.music('shred'));
 
 					transIn = FlxTransitionableState.defaultTransIn;
 					transOut = FlxTransitionableState.defaultTransOut;
@@ -3862,7 +3862,7 @@ class PlayState extends MusicBeatState
 			shadersLoaded = true;
 			// also comment filters.push if your planning to do a disable shaders option
 			filters.push(ShadersHandler.chromaticAberration);
-			camfilters.push(ShadersHandler.radialBlur);
+			filters.push(ShadersHandler.radialBlur);
 		}
 
 		if (generatedMusic)
@@ -3943,7 +3943,7 @@ class PlayState extends MusicBeatState
 		if (SONG.song.toLowerCase() == 'valentine')
 		{
 			
-			if (curBeat == 16){
+			if (curBeat == 16 || curBeat == 52){
 					defaultCamZoom = 1.3;
 					garage.animation.play("crazy");
 					speakers.animation.play("boom");
@@ -3964,6 +3964,9 @@ class PlayState extends MusicBeatState
 			if (curBeat > 15 && curBeat < 114){
 					chromOn = true;
 				FlxG.camera.shake(0.01, 0.5);
+			}
+			if (curBeat == 48) {
+					garage.animation.play("notcrazy");
 			}
 			if (curBeat == 114) {
 					chromOn = false;

@@ -41,11 +41,13 @@ class MainMenuState extends MusicBeatState
 	public static var firstStart:Bool = true;
 
 	public static var nightly:String = "";
+	public static var bgcol:FlxColor = 0xFF343434;
 
 	public static var kadeEngineVer:String = "1.5.4" + nightly;
 	public static var gameVer:String = "0.2.7.1";
 	public var bl:Float = 0;
 	public static var instance:MainMenuState = null;
+		var bg:FlxSprite = new FlxSprite(-100).loadGraphic(Paths.image('menuDesat'));
 
 	var magenta:FlxSprite;
 	var camFollow:FlxObject;
@@ -65,15 +67,11 @@ class MainMenuState extends MusicBeatState
 		{
 			FlxG.sound.playMusic(Paths.music('freakyMenu'));
 		}
-		var bbb:FlxSprite = new FlxSprite().makeGraphic(1280, 720, 0xFF343434);
-bbb.scrollFactor.set();
-add(bbb);
 		FlxG.camera.setFilters([ShadersHandler.chromaticAberration, ShadersHandler.radialBlur]);
 		ShadersHandler.setChrome(0);
 		//ShadersHandler.setBlur(0,0);
 		persistentUpdate = persistentDraw = true;
 
-		var bg:FlxSprite = new FlxSprite(-100).loadGraphic(Paths.image('menuDesat'));
 		bg.scrollFactor.x = 0;
 		bg.scrollFactor.y = 0.10;
 		bg.setGraphicSize(Std.int(bg.width * 1.1));
@@ -143,6 +141,10 @@ add(bbb);
 			controls.setKeyboardScheme(KeyboardScheme.Duo(true), true);
 
 		changeItem();
+					menuItems.forEach(function(spr:FlxSprite){
+						spr.alpha = 0;
+						FlxTween.tween(spr, {alpha:1}, 0.2);
+					});
 
 		super.create();
 	}
@@ -201,7 +203,7 @@ add(bbb);
 				{
 					selectedSomethin = true;
 					FlxG.sound.play(Paths.sound('confirmMenu'));
-					FlxG.camera.shake(0.02, 0.3);
+					FlxG.camera.shake(0.004, 0.2);
 					if (FlxG.save.data.flashing)
 						FlxFlicker.flicker(magenta, 1.1, 0.15, false);
 
@@ -233,6 +235,11 @@ add(bbb);
 									goToState();
 								});
 							}
+							
+							
+							
+							
+							
 						}
 					});
 				}
@@ -241,7 +248,8 @@ add(bbb);
 
 		super.update(elapsed);
 		ShadersHandler.setChrome(FlxG.random.int(2,6)/1000);
-		ShadersHandler.setRadialBlur(640,360,FlxG.random.float(0.001,0.05));
+		ShadersHandler.setRadialBlur(640, 360,  FlxG.random.float(0.001, 0.01));
+		
 		menuItems.forEach(function(spr:FlxSprite)
 		{
 			spr.screenCenter(X);
@@ -251,8 +259,17 @@ add(bbb);
 	function goToState()
 	{
 		//ShadersHandler.setBlur(0,bl);
-		FlxTween.tween(MainMenuState.instance, {bl: 0.1}, 1, {ease:FlxEase.circIn});
-		FlxTween.tween(camFollow,{y:-5000},1,{ease:FlxEase.circIn,onComplete:function(e:FlxTween){
+							switch(optionShit[curSelected]){
+								case "freeplay":
+									FlxTween.color(bg, 0.5,bg.color,FreeplayState.bgcol);
+								case "options":
+									FlxTween.color(bg, 0.5,bg.color,OptionsMenu.bgcol);
+							}
+							
+		FlxTween.tween(menuItems.members[0],{y:-5000+menuItems.members[0].y},1,{ease:FlxEase.circIn});
+		FlxTween.tween(menuItems.members[1],{y:-5000+menuItems.members[1].y},1,{ease:FlxEase.circIn});
+		FlxTween.tween(menuItems.members[2],{y:-5000+menuItems.members[2].y},1,{ease:FlxEase.circIn});
+		FlxTween.tween(menuItems.members[3],{y:-5000+menuItems.members[3].y},1,{ease:FlxEase.circIn,onComplete:function(e:FlxTween){
 		var daChoice:String = optionShit[curSelected];
 
 		switch (daChoice)

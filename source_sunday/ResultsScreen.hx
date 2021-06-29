@@ -187,18 +187,21 @@ class ResultsScreen extends FlxSubState
 
         if (FlxG.keys.justPressed.ENTER)
         {
-            music.fadeOut(0.3);
-            
             PlayState.loadRep = false;
             PlayState.rep = null;
+			
+            music.fadeOut(0.3,0,function(e:FlxTween){
+            
 
             if (PlayState.isStoryMode)
             {
-                FlxG.sound.playMusic(Paths.music('freakyMenu'));
+                FlxG.sound.playMusic(Paths.music('shred'));
                 FlxG.switchState(new MainMenuState());
             }
             else
                 FlxG.switchState(new FreeplayState());
+				
+			});
         }
 
         if (FlxG.keys.justPressed.EIGHT)
@@ -225,13 +228,14 @@ class ResultsScreen extends FlxSubState
 
             var poop:String = Highscore.formatSong(songFormat, PlayState.rep.replay.songDiff);
 
-            music.fadeOut(0.3);
+            music.fadeOut(0.3,0,function(e:FlxTween){
 
             PlayState.SONG = Song.loadFromJson(poop, PlayState.rep.replay.songName);
             PlayState.isStoryMode = false;
             PlayState.storyDifficulty = PlayState.rep.replay.songDiff;
             PlayState.storyWeek = 0;
             LoadingState.loadAndSwitchState(new PlayState());
+			});
         }
 
         if (FlxG.keys.justPressed.F2 )
@@ -250,13 +254,14 @@ class ResultsScreen extends FlxSubState
 
             var poop:String = Highscore.formatSong(songFormat, PlayState.storyDifficulty);
 
-            music.fadeOut(0.3);
+            music.fadeOut(0.3,0,function(e:FlxTween){
 
             PlayState.SONG = Song.loadFromJson(poop, PlayState.SONG.song);
             PlayState.isStoryMode = false;
             PlayState.storyDifficulty = PlayState.storyDifficulty;
             PlayState.storyWeek = 0;
             LoadingState.loadAndSwitchState(new PlayState());
+			});
         }
 
 		super.update(elapsed);

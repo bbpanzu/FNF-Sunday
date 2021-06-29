@@ -28,6 +28,7 @@ class StoryMenuState extends MusicBeatState
 		['Valentine', 'BI-NB', 'Marx']
 	];
 	var curDifficulty:Int = 1;
+	public static var bgcol:FlxColor = 0xFF232323;
 
 	public static var weekUnlocked:Array<Bool> = [true, true, true, true, true, true, true];
 

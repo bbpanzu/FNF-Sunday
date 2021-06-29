@@ -1,6 +1,7 @@
 package;
 
 import Song.SwagSong;
+import flixel.effects.FlxFlicker;
 import flixel.input.gamepad.FlxGamepad;
 import flash.text.TextField;
 import flixel.FlxG;
@@ -9,7 +10,9 @@ import flixel.addons.display.FlxGridOverlay;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
 import flixel.text.FlxText;
+import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
+import flixel.util.FlxTimer;
 import lime.utils.Assets;
 import openfl.utils.AssetManifest;
 
@@ -41,6 +44,8 @@ class FreeplayState extends MusicBeatState
 
 	public static var songData:Map<String,Array<SwagSong>> = [];
 	public var comboText:FlxText;
+		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
+	public static var bgcol:FlxColor = 0xFF330000;
 
 	public static function loadDiff(diff:Int, format:String, name:String, array:Array<SwagSong>)
 	{
@@ -56,6 +61,7 @@ class FreeplayState extends MusicBeatState
 
 	override function create()
 	{
+		
 		var initSonglist = CoolUtil.coolTextFile(Paths.txt('freeplaySonglist'));
 
 		//var diffList = "";
@@ -70,12 +76,12 @@ class FreeplayState extends MusicBeatState
 				case 'Dad-Battle': format = 'Dadbattle';
 				case 'Philly-Nice': format = 'Philly';
 			}
-
-			var diffs = [];
+			var diffs:Array<SwagSong> = [];
+			trace(diffs.length);
 			FreeplayState.loadDiff(0,format,meta.songName,diffs);
 			FreeplayState.loadDiff(1,format,meta.songName,diffs);
 			FreeplayState.loadDiff(2,format,meta.songName,diffs);
-			FreeplayState.songData.set(meta.songName,diffs);
+			FreeplayState.songData.set(meta.songName, diffs);
 			trace('loaded diffs for ' + meta.songName);
 			//diffList += meta.songName + "\nEasy: " + DiffCalc.CalculateDiff(songData.get(meta.songName)[0]) + "\nNormal: " + DiffCalc.CalculateDiff(songData.get(meta.songName)[1]) + "\nHard: " + DiffCalc.CalculateDiff(songData.get(meta.songName)[2]) + "\n\n";
 		}
@@ -104,9 +110,10 @@ class FreeplayState extends MusicBeatState
 
 		// LOAD CHARACTERS
 
-		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
-		bg.color = 0xFF330000;
+		bg.scrollFactor.x = 0;
+		bg.color = bgcol;
 		add(bg);
+		
 
 		grpSongs = new FlxTypedGroup<Alphabet>();
 		add(grpSongs);
@@ -129,7 +136,10 @@ class FreeplayState extends MusicBeatState
 			// DONT PUT X IN THE FIRST PARAMETER OF new ALPHABET() !!
 			// songText.screenCenter(X);
 		}
-
+				grpSongs.forEach(function(spr:FlxSprite){
+						spr.alpha = 0;
+						FlxTween.tween(spr, {alpha:1}, 0.2);
+					});
 		scoreText = new FlxText(FlxG.width * 0.7, 5, 0, "", 32);
 		// scoreText.autoSize = false;
 		scoreText.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, RIGHT);
@@ -246,13 +256,26 @@ class FreeplayState extends MusicBeatState
 
 		if (controls.BACK)
 		{
-			FlxG.switchState(new MainMenuState());
+			grpSongs.forEach(function(e:Alphabet){
+				FlxTween.tween(e,{x: -1000}, 0.1);
+			});
+			FlxTween.color(bg, 0.1, bg.color, MainMenuState.bgcol, {
+				onComplete:function(e:FlxTween){
+					FlxG.switchState(new MainMenuState());
+				}
+				
+			});
+			
+			
 		}
 
 		if (accepted)
 		{
 			// adjusting the song name to be compatible
 			var songFormat = StringTools.replace(songs[curSelected].songName, " ", "-");
+			
+			
+			
 			switch (songFormat) {
 				case 'Dad-Battle': songFormat = 'Dadbattle';
 				case 'Philly-Nice': songFormat = 'Philly';
@@ -275,7 +298,24 @@ class FreeplayState extends MusicBeatState
 			PlayState.storyDifficulty = curDifficulty;
 			PlayState.storyWeek = songs[curSelected].week;
 			trace('CUR WEEK' + PlayState.storyWeek);
-			LoadingState.loadAndSwitchState(new PlayState());
+			var llll = FlxG.sound.play(Paths.sound('confirmMenu')).length;
+			grpSongs.forEach(function(e:Alphabet){
+				if (e.text != songs[curSelected].songName){
+					FlxTween.tween(e, {x: -6000}, llll / 1000,{onComplete:function(e:FlxTween){
+					
+						LoadingState.loadAndSwitchState(new PlayState());
+					}});
+				}else{
+					FlxFlicker.flicker(e);
+					trace(curSelected);
+					trace(hmm.song);
+					FlxTween.tween(e, {x: e.x + 20}, llll/1000);
+				}
+			
+			
+			
+			
+			});
 		}
 	}
 
