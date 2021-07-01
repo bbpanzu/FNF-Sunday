@@ -1701,6 +1701,7 @@ class PlayState extends MusicBeatState
 			}
 		#end
 		var daBeats:Int = 0; // Not exactly representative of 'daBeats' lol, just how much it has looped
+
 		for (section in noteData)
 		{
 			
@@ -1710,12 +1711,24 @@ class PlayState extends MusicBeatState
 			
 			var coolSection:Int = Std.int(section.lengthInSteps / 4);
 
-			for (songNotes in section.sectionNotes)
+			// check for fucking stupid stacked notes
+
+			var newNote = [];
+
+			for (i in 0...section.sectionNotes.length)
+			{
+				var note = section.sectionNotes[i];
+				if (!newNote.contains(note))
+					newNote.push(note);
+			}
+
+			for (songNotes in newNote)
 			{
 				var daStrumTime:Float = songNotes[0] + FlxG.save.data.offset + songOffset;
 				if (daStrumTime < 0)
 					daStrumTime = 0;
 				var daNoteData:Int = Std.int(songNotes[1] % 4);
+
 
 				var gottaHitNote:Bool = section.mustHitSection;
 
@@ -1724,6 +1737,8 @@ class PlayState extends MusicBeatState
 					gottaHitNote = !section.mustHitSection;
 				}
 
+				
+				
 				var oldNote:Note;
 				if (unspawnNotes.length > 0)
 					oldNote = unspawnNotes[Std.int(unspawnNotes.length - 1)];
@@ -1732,10 +1747,11 @@ class PlayState extends MusicBeatState
 
 				var swagNote:Note = new Note(daStrumTime, daNoteData, oldNote,alt);
 
-				if (!gottaHitNote && PlayStateChangeables.Optimize)
-					continue;
 				swagNote.sustainLength = songNotes[2];
 				swagNote.scrollFactor.set(0, 0);
+
+				if (!gottaHitNote && PlayStateChangeables.Optimize)
+					continue;
 
 
 				var susLength:Float = swagNote.sustainLength;
