@@ -120,8 +120,8 @@ class VideoState extends MusicBeatState
 				doShit = true;
 			//}, 1);
 		//}
-		var data = Main.webmHandle.webm.bitmapData;
-		videoSprite.loadGraphic(data);
+		//var data = Main.webmHandle.webm.bitmapData;
+		//videoSprite.loadGraphic(data);
 	}
 	
 	override function update(elapsed:Float)
