@@ -134,6 +134,7 @@ class PlayState extends MusicBeatState
 
 	public var strumLine:FlxSprite;
 	public var fret:FlxSprite;
+	public var ending:FlxSprite;
 	private var curSection:Int = 0;
 
 	private var camFollow:FlxObject;
@@ -160,6 +161,7 @@ class PlayState extends MusicBeatState
 
 
 	public var healthBarBG:FlxSprite;
+	public var carolEnter:FlxSprite;
 	public var healthBar:FlxBar;
 	private var songPositionBar:Float = 0;
 	
@@ -278,6 +280,7 @@ class PlayState extends MusicBeatState
 		PlayStateChangeables.scrollSpeed = FlxG.save.data.scrollSpeed;
 		PlayStateChangeables.botPlay = FlxG.save.data.botplay;
 		PlayStateChangeables.Optimize = FlxG.save.data.optimize;
+		PlayStateChangeables.guitarEnabled = !FlxG.save.data.guitar;
 
 		// pre lowercasing the song name (create)
 		var songLowercase = StringTools.replace(PlayState.SONG.song, " ", "-").toLowerCase();
@@ -777,6 +780,7 @@ class PlayState extends MusicBeatState
 				speakers.frames = Paths.getSparrowAtlas('sunday/bigspeakers');
 				speakers.animation.addByIndices("idle", "speakers",[0],"", 24,true);
 				speakers.animation.addByPrefix("boom", "speakers", 24,true);
+				add(garage);
 			}else if (SONG.song.toLowerCase() == 'bi-nb'){
 				garage.frames = Paths.getSparrowAtlas('sunday/bg_binb');
 				garage.animation.addByPrefix("idle", "Background");
@@ -786,11 +790,13 @@ class PlayState extends MusicBeatState
 				speakers.animation.addByIndices("idle", "amp",[0],"", 24,true);
 				speakers.animation.addByPrefix("boom", "amp boom", 24,true);
 				speakers.setPosition(-260.75,243.95);
+			add(garage);
 			}else if (SONG.song.toLowerCase() == 'marx'){
 				garage.frames = Paths.getSparrowAtlas('sunday/bg_marx');
 				garage.animation.addByPrefix("idle", "Background");
 				garage.animation.addByPrefix("crazy", "bg_radicalLeft");
 				garage.animation.addByPrefix("notcrazy", "bg_moderateLeft");
+				add(garage);
 				speakers.frames = Paths.getSparrowAtlas('sunday/rig');
 				speakers.animation.addByIndices("idle", "amp",[0],"", 24,true);
 				speakers.animation.addByPrefix("boom", "amp boom", 24, true);
@@ -798,6 +804,16 @@ class PlayState extends MusicBeatState
 				glowShit.loadGraphic(Paths.image('sunday/shiny'));
 				glowShit.blend = "add";
 				glowShit.visible = false;
+				carolEnter = new FlxSprite(795.25-193.95-37, 45.35-237+173);
+				carolEnter.frames = Paths.getSparrowAtlas("sunday/carol_enter");
+				carolEnter.animation.addByPrefix("wait", "carol interupt", 0, false);
+				carolEnter.animation.addByPrefix("enter", "carol interupt", 24, false);
+				carolEnter.animation.play("wait");
+				add(carolEnter);
+				FlxG.sound.cache(Paths.sound("carolTellsSundayToSTFU"));
+				ending = new FlxSprite().loadGraphic(Paths.image("sunday/ending"));
+				ending.scrollFactor.set();
+				
 				
 			}
 				fret = new FlxSprite().loadGraphic(Paths.image("sunday/fret"));
@@ -807,7 +823,6 @@ class PlayState extends MusicBeatState
 			// bg.updateHitbox();
 			garage.antialiasing = true;
 			garage.active = true;
-			add(garage);
 			garage.animation.play("idle");
 
 			add(aaa);
@@ -1686,7 +1701,7 @@ class PlayState extends MusicBeatState
 			
 			var alt:String = "";
 			
-			if (section.altAnim && SONG.song.toLowerCase() == "marx")alt = "guitar";
+			if (section.altAnim && SONG.song.toLowerCase() == "marx" && PlayStateChangeables.guitarEnabled)alt = "guitar";
 			
 			var coolSection:Int = Std.int(section.lengthInSteps / 4);
 
@@ -2177,6 +2192,13 @@ class PlayState extends MusicBeatState
 				iconP1.animation.play('bf-old');
 		}
 
+		#if debug
+		if (FlxG.keys.justPressed.T){
+			carolEnter.animation.play("enter");
+		}
+		#end
+		
+		
 		switch (curStage)
 		{
 			case 'philly':
@@ -2640,10 +2662,18 @@ class PlayState extends MusicBeatState
 							if(daNote.isSustainNote)
 							{
 								// Remember = minus makes notes go up, plus makes them go down
-								if(daNote.animation.curAnim.name.endsWith('end') && daNote.prevNote != null)
-									daNote.y += daNote.prevNote.height;
-								else
-									daNote.y += daNote.height / 2;
+								if (daNote.style == "guitar"){//not sure why the note looks weird on downscroll
+									if(daNote.animation.curAnim.name.endsWith('end') && daNote.prevNote != null)
+										daNote.y -= daNote.prevNote.height;
+									else
+										daNote.y -= daNote.height / 2;
+
+								}else{
+									if(daNote.animation.curAnim.name.endsWith('end') && daNote.prevNote != null)
+										daNote.y += daNote.prevNote.height;
+									else
+										daNote.y += daNote.height / 2;
+								}
 
 								// If not in botplay, only clip sustain notes when properly hit, botplay gets to clip it everytime
 								if(!FlxG.save.data.botplay)
@@ -2708,9 +2738,9 @@ class PlayState extends MusicBeatState
 						{
 							if (SONG.notes[Math.floor(curStep / 16)].altAnim){
 								dad.altAnim = '-alt';
-								if (SONG.song.toLowerCase() == 'marx' && !guitarModNOW) changeToGuitar();
+								if (SONG.song.toLowerCase() == 'marx' && !guitarModNOW && PlayStateChangeables.guitarEnabled) changeToGuitar();
 							}else{
-								if (SONG.song.toLowerCase() == 'marx' && guitarModNOW) changeToSing();
+								if (SONG.song.toLowerCase() == 'marx' && guitarModNOW && PlayStateChangeables.guitarEnabled) changeToSing();
 							}
 						}
 	
@@ -3994,11 +4024,13 @@ class PlayState extends MusicBeatState
 			if (curBeat < 195 && curBeat > 99){
 				if (anti_seizure){
 					garage.animation.play('notcrazy');
+					garage.alpha = 0.2;
 				}else{
 					garage.animation.play('crazy');
 				}
 					chromOn = true;
 			}else{
+					garage.alpha = 1;
 					chromOn = false;
 					garage.animation.play('idle');
 			}
@@ -4015,7 +4047,7 @@ class PlayState extends MusicBeatState
 				speakers.animation.play("boom");
 				
 				glowShit.visible = true;
-				
+				carolEnter.visible = false;
 				if (anti_seizure){ 
 					garage.animation.play('notcrazy');
 				}else{
@@ -4030,6 +4062,7 @@ class PlayState extends MusicBeatState
 			//	evilTrail.changeValuesEnabled(false, false, false, false);
 			//	trailshit.add(evilTrail);
 			}else{
+				carolEnter.visible = true;
 					chromOn = false;
 					defaultCamZoom = 1;
 				garage.setPosition( -316, -209);
@@ -4039,12 +4072,27 @@ class PlayState extends MusicBeatState
 			}
 			
 			if (curBeat == 224){
+				if(isStoryMode){
 					defaultCamZoom = 1.3;
 				dad.playAnim("end");
+				}else{
+					endSong();
+				}
 			}
 			if (curBeat == 32 ||curBeat == 128){
 				FlxG.camera.flash();
 				FlxG.camera.shake(0.05, 0.2);
+			}
+			
+			
+			if (curBeat == 225 && carolEnter.animation.curAnim.name == "wait"){
+				carolEnter.animation.play("enter");
+				FlxG.sound.play(Paths.sound("carolTellsSundayToSTFU"), 0.9);
+			}
+			
+			if (curBeat == 240){
+				ending.cameras = [camHUD];
+				add(ending);
 			}
 		}
 	}

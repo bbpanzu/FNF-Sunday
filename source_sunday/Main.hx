@@ -81,7 +81,7 @@ class Main extends Sprite
 		}
 
 		#if !debug
-		initialState = TitleState;
+		initialState = WarningState;
 		#end
 		#if web
 		framerate = 60;
@@ -110,7 +110,7 @@ class Main extends Sprite
 		webmHandle.source(ourSource);
 		webmHandle.makePlayer();
 		webmHandle.webm.name = str1;
-		//addChild(webmHandle.webm);
+		addChild(webmHandle.webm);
 		GlobalVideo.setWebm(webmHandle);
 		#end
 		

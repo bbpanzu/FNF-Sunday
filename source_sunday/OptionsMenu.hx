@@ -32,6 +32,7 @@ class OptionsMenu extends MusicBeatState
 			#if desktop
 			new FPSCapOption("Cap your FPS"),
 			#end
+			new Guitar("Toggle Guitar Hero-styled Notes"),
 			new ScrollSpeedOption("Change your scroll speed (1 = Chart dependent)"),
 			new AccuracyDOption("Change how accuracy is calculated. (Accurate = Simple, Complex = Milisecond Based)"),
 			new ResetButtonOption("Toggle pressing R to gameover."),

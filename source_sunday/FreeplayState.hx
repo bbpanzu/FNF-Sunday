@@ -303,7 +303,11 @@ class FreeplayState extends MusicBeatState
 				if (e.text != songs[curSelected].songName){
 					FlxTween.tween(e, {x: -6000}, llll / 1000,{onComplete:function(e:FlxTween){
 					
-						LoadingState.loadAndSwitchState(new PlayState());
+						if (FlxG.keys.pressed.ALT){
+							FlxG.switchState(new ChartingState());
+						}else{
+							LoadingState.loadAndSwitchState(new PlayState());
+						}
 					}});
 				}else{
 					FlxFlicker.flicker(e);

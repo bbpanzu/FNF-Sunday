@@ -30,10 +30,12 @@ class WarningState extends FlxState
 		
 		if (FlxG.keys.justPressed.ENTER){
 			PlayState.anti_seizure = false;
+			FlxG.save.data.flashing = true;
 			FlxG.switchState(new TitleState());
 		}
 		if (FlxG.keys.justPressed.BACKSPACE){
 			PlayState.anti_seizure = true;
+			FlxG.save.data.flashing = false;
 			FlxG.switchState(new TitleState());
 		}
 		super.update(elapsed);

@@ -8,7 +8,9 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.group.FlxGroup;
 import flixel.math.FlxMath;
 import flixel.text.FlxText;
+import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
+import flixel.util.FlxAxes;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 import lime.net.curl.CURLCode;
@@ -28,7 +30,7 @@ class StoryMenuState extends MusicBeatState
 		['Valentine', 'BI-NB', 'Marx']
 	];
 	var curDifficulty:Int = 1;
-	public static var bgcol:FlxColor = 0xFF232323;
+	public static var bgcol:FlxColor = 0xFF0A0A0A;
 
 	public static var weekUnlocked:Array<Bool> = [true, true, true, true, true, true, true];
 
@@ -45,6 +47,7 @@ class StoryMenuState extends MusicBeatState
 	var txtWeekTitle:FlxText;
 
 	var curWeek:Int = 0;
+	var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
 
 	var txtTracklist:FlxText;
 
@@ -57,9 +60,23 @@ class StoryMenuState extends MusicBeatState
 	var sprDifficulty:FlxSprite;
 	var leftArrow:FlxSprite;
 	var rightArrow:FlxSprite;
+	
+		var rankText:FlxText;
+		
+		var ui_tex:FlxAtlasFrames;
+		var yellowBG:FlxSprite;
+		var inverted:FlxSprite;
+		
+		var blackBarThingie:FlxSprite;
+		
+		var title:FlxSprite;
 
 	override function create()
 	{
+		
+		
+		
+		
 		#if windows
 		// Updating Discord Rich Presence
 		DiscordClient.changePresence("In the Story Mode Menu", null);
@@ -71,9 +88,22 @@ class StoryMenuState extends MusicBeatState
 		if (FlxG.sound.music != null)
 		{
 			if (!FlxG.sound.music.playing)
-				FlxG.sound.playMusic(Paths.music('freakyMenu'));
+				FlxG.sound.playMusic(Paths.music('shred'));
 		}
 
+		
+		rankText = new FlxText(0, 10);
+		
+		ui_tex = Paths.getSparrowAtlas('campaign_menu_UI_assets');
+		yellowBG = new FlxSprite(0, 56).makeGraphic(FlxG.width, 404, 0xFFFCFCFC);
+		inverted = new FlxSprite(0, 56).makeGraphic(FlxG.width, 400, 0xFF232323);
+		
+		blackBarThingie = new FlxSprite().makeGraphic(FlxG.width, 56, FlxColor.BLACK);
+		
+		title = new FlxSprite();
+		
+		add(bg);
+		bg.color = bgcol;
 		persistentUpdate = persistentDraw = true;
 
 		scoreText = new FlxText(10, 10, 0, "SCORE: 49324858", 36);
@@ -83,20 +113,15 @@ class StoryMenuState extends MusicBeatState
 		txtWeekTitle.setFormat("VCR OSD Mono", 32, FlxColor.WHITE, RIGHT);
 		txtWeekTitle.alpha = 0.7;
 
-		var rankText:FlxText = new FlxText(0, 10);
 		rankText.text = 'RANK: GREAT';
 		rankText.setFormat(Paths.font("vcr.ttf"), 32);
 		rankText.size = scoreText.size;
 		rankText.screenCenter(X);
 
-		var ui_tex = Paths.getSparrowAtlas('campaign_menu_UI_assets');
-		var yellowBG:FlxSprite = new FlxSprite(0, 56).makeGraphic(FlxG.width, 404, 0xFFFCFCFC);
-		var inverted:FlxSprite = new FlxSprite(0, 56).makeGraphic(FlxG.width,400,0xFF232323);
 
 		grpWeekText = new FlxTypedGroup<MenuItem>();
 		add(grpWeekText);
 
-		var blackBarThingie:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, 56, FlxColor.BLACK);
 		add(blackBarThingie);
 
 		grpWeekCharacters = new FlxTypedGroup<MenuCharacter>();
@@ -104,6 +129,7 @@ class StoryMenuState extends MusicBeatState
 		grpLocks = new FlxTypedGroup<FlxSprite>();
 		add(grpLocks);
 
+		
 		trace("Line 70");
 
 		for (i in 0...weekData.length)
@@ -168,8 +194,18 @@ class StoryMenuState extends MusicBeatState
 		trace("Line 150");
 
 		add(yellowBG);
-		add(grpWeekCharacters);
+		//add(grpWeekCharacters);
 		add(inverted);
+		
+		title.frames = Paths.getSparrowAtlas("sundaytitle");
+		title.animation.addByPrefix("noflash", "title", 0);
+		title.animation.addByPrefix("flash", "title", 24);
+		if (PlayState.anti_seizure) title.animation.play("noflash");
+		if (!PlayState.anti_seizure) title.animation.play("flash");
+		title.screenCenter(FlxAxes.X);
+		title.y = 70;
+		add(title);
+		
 
 		txtTracklist = new FlxText(FlxG.width * 0.05, yellowBG.x + yellowBG.height + 100, 0, "Tracks", 32);
 		txtTracklist.alignment = CENTER;
@@ -244,9 +280,21 @@ class StoryMenuState extends MusicBeatState
 
 		if (controls.BACK && !movedBack && !selectedWeek)
 		{
-			FlxG.sound.play(Paths.sound('cancelMenu'));
-			movedBack = true;
-			FlxG.switchState(new MainMenuState());
+			FlxTween.tween(txtTracklist, {y:730,alpha:0}, 0.1,{ease:FlxEase.quadIn});
+			FlxTween.tween(scoreText, {x:1300}, 0.1,{ease:FlxEase.quadIn});
+			FlxTween.tween(yellowBG, {x:1300}, 0.1,{ease:FlxEase.quadIn});
+			FlxTween.tween(inverted, {x:1300}, 0.1,{ease:FlxEase.quadIn});
+			FlxTween.tween(leftArrow, {alpha:0}, 0.1,{ease:FlxEase.quadIn});
+			FlxTween.tween(rightArrow, {alpha:0}, 0.1,{ease:FlxEase.quadIn});
+			FlxTween.tween(sprDifficulty, {y:730}, 0.1,{ease:FlxEase.quadIn});
+			FlxTween.tween(grpWeekText.members[0], {y:2000}, 1,{ease:FlxEase.quadIn});
+			FlxTween.tween(blackBarThingie, {x:1330}, 0.1,{ease:FlxEase.quadIn});
+			FlxTween.tween(title, {alpha:0}, 0.1,{ease:FlxEase.quadIn});
+			FlxTween.color(bg,1,bgcol,MainMenuState.bgcol,{onComplete:function(e:FlxTween){
+				FlxG.sound.play(Paths.sound('cancelMenu'));
+				movedBack = true;
+				FlxG.switchState(new MainMenuState());
+			}});
 		}
 
 		super.update(elapsed);
@@ -290,7 +338,9 @@ class StoryMenuState extends MusicBeatState
 			PlayState.campaignScore = 0;
 			new FlxTimer().start(1, function(tmr:FlxTimer)
 			{
-				FlxG.switchState(new VideoState('assets/videos/presunday/vid.webm', null, loadplayState));
+				FlxG.camera.fade(FlxColor.BLACK, 1, false, function(){
+						FlxG.switchState(new VideoState('assets/videos/presunday/vid.webm', loadplayState));
+				});
 			});
 		}
 	}

@@ -257,15 +257,15 @@ class FlashingLightsOption extends Option
 	}
 	public override function press():Bool
 	{
-		FlxG.save.data.flashing = !FlxG.save.data.flashing;
-		PlayState.anti_seizure = !FlxG.save.data.flashing;
+		//FlxG.save.data.flashing = !FlxG.save.data.flashing;
+		PlayState.anti_seizure = !PlayState.anti_seizure;
 		display = updateDisplay();
 		return true;
 	}
 
 	private override function updateDisplay():String
 	{
-		return "Flashing Lights " + (!FlxG.save.data.flashing ? "off" : "on");
+		return "Flashing Lights " + (PlayState.anti_seizure ? "off" : "on");
 	}
 }
 
@@ -286,6 +286,26 @@ class ShowInput extends Option
 	private override function updateDisplay():String
 	{
 		return (FlxG.save.data.inputShow ? "Extended Score Info" : "Minimalized Info");
+	}
+}
+
+class Guitar extends Option
+{
+	public function new(desc:String)
+	{
+		super();
+		description = desc;
+	}
+	public override function press():Bool
+	{
+		FlxG.save.data.guitar = !FlxG.save.data.guitar;
+		display = updateDisplay();
+		return true;
+	}
+
+	private override function updateDisplay():String
+	{
+		return (FlxG.save.data.guitar ? "Guitar Notes Off" : "Guitar Notes On");
 	}
 }
 

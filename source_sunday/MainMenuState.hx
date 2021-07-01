@@ -264,6 +264,8 @@ class MainMenuState extends MusicBeatState
 									FlxTween.color(bg, 0.5,bg.color,FreeplayState.bgcol);
 								case "options":
 									FlxTween.color(bg, 0.5,bg.color,OptionsMenu.bgcol);
+								case "story mode":
+									FlxTween.color(bg, 0.5,bg.color,StoryMenuState.bgcol);
 							}
 							
 		FlxTween.tween(menuItems.members[0],{y:-5000+menuItems.members[0].y},1,{ease:FlxEase.circIn});
