@@ -117,7 +117,7 @@ class VideoState extends MusicBeatState
 						vidSound.time = vidSound.length * soundMultiplier;
 					}
 				}, 0);*/
-				doShit = true;
+				doShit = false;
 			//}, 1);
 		//}
 		var data = Main.webmHandle.webm.bitmapData;
