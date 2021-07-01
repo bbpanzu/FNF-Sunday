@@ -279,7 +279,7 @@ class PlayState extends MusicBeatState
 		PlayStateChangeables.safeFrames = FlxG.save.data.frames;
 		PlayStateChangeables.scrollSpeed = FlxG.save.data.scrollSpeed;
 		PlayStateChangeables.botPlay = FlxG.save.data.botplay;
-		PlayStateChangeables.Optimize = FlxG.save.data.optimize;
+		PlayStateChangeables.Optimize = false;
 		PlayStateChangeables.guitarEnabled = !FlxG.save.data.guitar;
 
 		// pre lowercasing the song name (create)
@@ -755,6 +755,7 @@ class PlayState extends MusicBeatState
 			}
 			case 'garage':
 				{
+					trace('GARAGE!!!!!!!!!!!!!!!!!!!!!!!!!!!');
 					camZooming = true;
 						aaa = new FlxSprite( -422.05, 284.05);
 			aaa.frames = Paths.getSparrowAtlas('sunday/aaa');
@@ -816,6 +817,7 @@ class PlayState extends MusicBeatState
 				
 				
 			}
+			trace(garage);
 				fret = new FlxSprite().loadGraphic(Paths.image("sunday/fret"));
 				fret.alpha = 0;
 				fret.scrollFactor.set();
