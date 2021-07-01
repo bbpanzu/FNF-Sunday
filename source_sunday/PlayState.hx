@@ -62,7 +62,10 @@ import haxe.Json;
 import lime.utils.Assets;
 import openfl.display.BlendMode;
 import openfl.display.StageQuality;
+
+#if shaders
 import openfl.filters.ShaderFilter;
+#end
 //EYO SUP BBPANZU lol
 import openfl.filters.BitmapFilter;
 
@@ -2219,7 +2222,7 @@ class PlayState extends MusicBeatState
 
 		super.update(elapsed);
 		
-		
+		#if shaders
 		if (chromOn){
 		
 			ch = FlxG.random.int(1,5) / 1000;
@@ -2232,7 +2235,7 @@ class PlayState extends MusicBeatState
 			ShadersHandler.setRadialBlur(0,0,0);
 			
 		}
-		
+		#end
 		
 		scoreTxt.text = Ratings.CalculateRanking(songScore,songScoreDef,nps,maxNPS,accuracy);
 		if (FlxG.keys.justPressed.ENTER && startedCountdown && canPause)
@@ -3889,6 +3892,7 @@ class PlayState extends MusicBeatState
 	{
 		super.beatHit();
 		
+		#if shaders
 		if (curBeat > 0 && !shadersLoaded)
 		{
 			shadersLoaded = true;
@@ -3896,7 +3900,7 @@ class PlayState extends MusicBeatState
 			filters.push(ShadersHandler.chromaticAberration);
 			filters.push(ShadersHandler.radialBlur);
 		}
-
+		#end
 		if (generatedMusic)
 		{
 			notes.sort(FlxSort.byY, (FlxG.save.data.downscroll ? FlxSort.ASCENDING : FlxSort.DESCENDING));

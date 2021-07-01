@@ -67,9 +67,12 @@ class MainMenuState extends MusicBeatState
 		{
 			FlxG.sound.playMusic(Paths.music('freakyMenu'));
 		}
+		
+		#if shaders
 		FlxG.camera.setFilters([ShadersHandler.chromaticAberration, ShadersHandler.radialBlur]);
 		ShadersHandler.setChrome(0);
 		//ShadersHandler.setBlur(0,0);
+		#end
 		persistentUpdate = persistentDraw = true;
 
 		bg.scrollFactor.x = 0;
@@ -247,9 +250,10 @@ class MainMenuState extends MusicBeatState
 		}
 
 		super.update(elapsed);
+		#if shaders
 		ShadersHandler.setChrome(FlxG.random.int(2,6)/1000);
 		ShadersHandler.setRadialBlur(640, 360,  FlxG.random.float(0.001, 0.01));
-		
+		#end
 		menuItems.forEach(function(spr:FlxSprite)
 		{
 			spr.screenCenter(X);
