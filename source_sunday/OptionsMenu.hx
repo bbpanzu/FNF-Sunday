@@ -23,6 +23,8 @@ class OptionsMenu extends MusicBeatState
 	public static var bgcol:FlxColor = 0xFFeaeaea;
 		var menuBG:FlxSprite = new FlxSprite().loadGraphic(Paths.image("menuDesat"));
 
+	public static var instance:OptionsMenu;
+
 	var options:Array<OptionCatagory> = [
 		new OptionCatagory("Gameplay", [
 			new DFJKOption(controls),
@@ -75,6 +77,8 @@ class OptionsMenu extends MusicBeatState
 	var blackBorder:FlxSprite;
 	override function create()
 	{
+
+		instance = this;
 
 		menuBG.color = bgcol;
 		menuBG.setGraphicSize(Std.int(menuBG.width * 1.1));
