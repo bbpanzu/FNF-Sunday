@@ -25,6 +25,10 @@ class OptionsMenu extends MusicBeatState
 	public static var bgcol:FlxColor = 0xFFeaeaea;
 		var menuBG:FlxSprite = new FlxSprite().loadGraphic(Paths.image("menuDesat"));
 
+	public var acceptInput:Bool = true;
+
+	public static var instance:OptionsMenu;
+
 	var options:Array<OptionCatagory> = [
 		new OptionCatagory("Gameplay", [
 			new DFJKOption(controls),
@@ -83,7 +87,9 @@ class OptionsMenu extends MusicBeatState
 		instance = this;
 		var menuBG:FlxSprite = new FlxSprite().loadGraphic(Paths.image("menuDesat"));
 
-		menuBG.color = 0xFFea71fd;
+		instance = this;
+
+		menuBG.color = bgcol;
 		menuBG.setGraphicSize(Std.int(menuBG.width * 1.1));
 		menuBG.updateHitbox();
 		menuBG.screenCenter();
@@ -127,11 +133,22 @@ class OptionsMenu extends MusicBeatState
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-
 		if (acceptInput)
-		{
-			if (controls.BACK && !isCat)
-				FlxG.switchState(new MainMenuState());
+			{
+			if (controls.BACK && !isCat){
+				grpControls.forEach(function(e:Alphabet){
+					FlxTween.tween(e,{x: -1000}, 0.1);
+				});
+				
+			FlxTween.color(menuBG, 0.1, menuBG.color, MainMenuState.bgcol, {
+				onComplete:function(e:FlxTween){
+					FlxG.switchState(new MainMenuState());
+				}
+				
+			});
+				
+			
+			}
 			else if (controls.BACK)
 			{
 				isCat = false;

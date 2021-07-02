@@ -1542,13 +1542,16 @@ class PlayState extends MusicBeatState
 		if (PlayStateChangeables.botPlay || loadRep || paused)
 			return;
 
-		var key = String.fromCharCode(evt.charCode);
+		// first convert it from openfl to a flixel key code
+		// then use FlxKey to get the key's name based off of the FlxKey dictionary
+		// this makes it work for special characters
 
+		@:privateAccess
+		var key = FlxKey.toStringMap.get(Keyboard.__convertKeyCode(evt.keyCode));
+	
 		var binds:Array<String> = [FlxG.save.data.leftBind,FlxG.save.data.downBind, FlxG.save.data.upBind, FlxG.save.data.rightBind];
 
 		var data = -1;
-
-		
 		
 		switch(evt.keyCode) // arrow keys
 		{
@@ -1566,15 +1569,15 @@ class PlayState extends MusicBeatState
 			if (binds[i].toLowerCase() == key)
 				data = i;
 		}
-		if (data == -1)
-			return;
 
-		if (keys[data])
+		for (i in 0...binds.length) // binds
 		{
-			return;
+			if (binds[i].toLowerCase() == key.toLowerCase())
+				data = i;
 		}
 
-		keys[data] = true;
+		if (data == -1)
+			return;
 
 		var ana = new Ana(Conductor.songPosition, null, false, "miss", data);
 
@@ -1587,7 +1590,7 @@ class PlayState extends MusicBeatState
 
 
 		dataNotes.sort((a, b) -> Std.int(a.strumTime - b.strumTime)); // sort by the earliest note
-
+		
 		if (dataNotes.length != 0)
 		{
 			var coolNote = dataNotes[0];
