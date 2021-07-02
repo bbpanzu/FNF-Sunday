@@ -1548,6 +1548,20 @@ class PlayState extends MusicBeatState
 
 		var data = -1;
 
+		
+		
+		switch(evt.keyCode) // arrow keys
+		{
+			case 37:
+				data = 0;
+			case 40:
+				data = 1;
+			case 38:
+				data = 2;
+			case 39:
+				data = 3;
+		}
+		
 		for (i in 0...binds.length){
 			if (binds[i].toLowerCase() == key)
 				data = i;
@@ -3922,13 +3936,13 @@ class PlayState extends MusicBeatState
 			notes.sort(FlxSort.byY, (FlxG.save.data.downscroll ? FlxSort.ASCENDING : FlxSort.DESCENDING));
 		}
 
-		//#if windows
+		#if windows
 		if (executeModchart && luaModchart != null)
 		{
 			luaModchart.setVar('curBeat',curBeat);
 			luaModchart.executeState('beatHit',[curBeat]);
 		}
-		//#end
+		#end
 
 		if (SONG.notes[Math.floor(curStep / 16)] != null)
 		{
