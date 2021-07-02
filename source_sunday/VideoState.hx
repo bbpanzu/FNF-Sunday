@@ -33,6 +33,7 @@ class VideoState extends MusicBeatState
 	public var doShit:Bool = false;
 	public var pauseText:String = "Press P To Pause/Unpause";
 	public var videoSprite:FlxSprite = new FlxSprite();
+	var ishit = 0;
 
 	public function new(source:String, toTrans:Void->Void)
 	{
@@ -82,11 +83,11 @@ class VideoState extends MusicBeatState
 
 		if (GlobalVideo.isWebm)
 		{
-			if (Assets.exists(leSource.replace(".webm", ".ogg"), MUSIC) || Assets.exists(leSource.replace(".webm", ".ogg"), SOUND))
-			{
+			//if (Assets.exists(leSource.replace(".webm", ".ogg"), MUSIC) || Assets.exists(leSource.replace(".webm", ".ogg"), SOUND))
+			//{
 				useSound = true;
 				vidSound = FlxG.sound.play(leSource.replace(".webm", ".ogg"));
-			}
+			//}
 		}
 
 		GlobalVideo.get().source(leSource);
@@ -122,12 +123,16 @@ class VideoState extends MusicBeatState
 		//}
 		var data = Main.webmHandle.webm.bitmapData;
 		videoSprite.loadGraphic(data);
+		
+		FlxG.camera.flash(FlxColor.BLACK, 0.5);
 	}
 	
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
 		
+		if (ishit < 8) pauseShit();
+		ishit++;
 		if (useSound)
 		{
 			var wasFuckingHit = GlobalVideo.get().webm.wasHitOnce;
@@ -180,16 +185,7 @@ class VideoState extends MusicBeatState
 		
 		if (FlxG.keys.justPressed.P)
 		{
-			txt.text = pauseText;
-			trace("PRESSED PAUSE");
-			GlobalVideo.get().togglePause();
-			if (GlobalVideo.get().paused)
-			{
-				GlobalVideo.get().alpha();
-			} else {
-				GlobalVideo.get().unalpha();
-				txt.text = defaultText;
-			}
+			pauseShit();
 		}
 		
 		if (controls.ACCEPT || GlobalVideo.get().ended || GlobalVideo.get().stopped)
@@ -218,5 +214,22 @@ class VideoState extends MusicBeatState
 		GlobalVideo.get().played = false;
 		GlobalVideo.get().stopped = false;
 		GlobalVideo.get().ended = false;
+	}
+	
+	public function pauseShit() 
+	{
+		
+			txt.text = pauseText;
+			trace("PRESSED PAUSE");
+			GlobalVideo.get().togglePause();
+			if (GlobalVideo.get().paused)
+			{
+				videoSprite.alpha = 0.5;
+				GlobalVideo.get().alpha();
+			} else {
+				videoSprite.alpha = 1;
+				GlobalVideo.get().unalpha();
+				txt.text = defaultText;
+			}
 	}
 }

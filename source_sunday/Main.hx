@@ -111,7 +111,7 @@ class Main extends Sprite
 		webmHandle.makePlayer();
 		webmHandle.webm.name = str1;
 		
-		addChild(webmHandle.webm);
+		//addChild(webmHandle.webm);
 		GlobalVideo.setWebm(webmHandle);
 		#end
 		
