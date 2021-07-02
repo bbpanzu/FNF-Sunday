@@ -23,7 +23,7 @@ class OptionsMenu extends MusicBeatState
 	public static var bgcol:FlxColor = 0xFFeaeaea;
 		var menuBG:FlxSprite = new FlxSprite().loadGraphic(Paths.image("menuDesat"));
 
-	public static var acceptInput:Bool = true;
+	public var acceptInput:Bool = true;
 
 	public static var instance:OptionsMenu;
 
