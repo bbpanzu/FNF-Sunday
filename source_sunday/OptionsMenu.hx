@@ -23,6 +23,8 @@ class OptionsMenu extends MusicBeatState
 	public static var bgcol:FlxColor = 0xFFeaeaea;
 		var menuBG:FlxSprite = new FlxSprite().loadGraphic(Paths.image("menuDesat"));
 
+	public static var acceptInput:Bool = true;
+
 	public static var instance:OptionsMenu;
 
 	var options:Array<OptionCatagory> = [
@@ -124,7 +126,8 @@ class OptionsMenu extends MusicBeatState
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-
+		if (acceptInput)
+			{
 			if (controls.BACK && !isCat){
 				grpControls.forEach(function(e:Alphabet){
 					FlxTween.tween(e,{x: -1000}, 0.1);
@@ -246,6 +249,7 @@ class OptionsMenu extends MusicBeatState
 				
 				changeSelection();
 			}
+		}
 		FlxG.save.flush();
 	}
 
