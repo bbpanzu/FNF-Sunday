@@ -3922,13 +3922,13 @@ class PlayState extends MusicBeatState
 			notes.sort(FlxSort.byY, (FlxG.save.data.downscroll ? FlxSort.ASCENDING : FlxSort.DESCENDING));
 		}
 
-		#if windows
+		//#if windows
 		if (executeModchart && luaModchart != null)
 		{
 			luaModchart.setVar('curBeat',curBeat);
 			luaModchart.executeState('beatHit',[curBeat]);
 		}
-		#end
+		//#end
 
 		if (SONG.notes[Math.floor(curStep / 16)] != null)
 		{
