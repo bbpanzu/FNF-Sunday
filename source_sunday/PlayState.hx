@@ -1568,11 +1568,6 @@ class PlayState extends MusicBeatState
 				data = i;
 		}
 
-		if (evt.keyLocation == KeyLocation.NUM_PAD)
-		{
-			trace(String.fromCharCode(evt.charCode) + " " + key);
-		}
-
 		if (data == -1)
 			return;
 
